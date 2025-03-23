@@ -1,9 +1,13 @@
 # MLOps Tools and Practices
 
-The goal of this folder is to demonstrate proficiency in MLOps and share some MLOps tools. This repository contains various components for implementing Machine Learning Operations best practices.
+The goal of this folder is to demonstrate proficiency in MLOps and share some MLOps tools. 
 
 ## Folder Structure
 
-- **data/**: Contains datasets and data processing scripts used for model training and evaluation.
-- **models/**: Stores trained model artifacts, model definitions, and serialized models.
-- **notebooks/**: Jupyter notebooks demonstrating exploratory data analysis, model development, and evaluation workflows.
+- **data**: Contains datasets 
+- **models**: Stores trained model artifacts
+- **notebooks**: Has Jupyter notebooks experimenting with different MLOps tools
+
+## Tools
+
+- [MLFlow](https://mlflow.org/)
