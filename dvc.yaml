@@ -1,0 +1,10 @@
+stages:
+  prepare:
+    cmd: python src/dvc_preprocessing.py
+    deps:
+      - data/used-cars_2cities_prep.csv
+      - src/dvc_preprocessing.py
+    outs:
+      - data/pipeline.pkl
+      - data/used_car_train_dcv.csv
+      - data/used_car_test_dcv.csv
