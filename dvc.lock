@@ -1,0 +1,22 @@
+schema: '2.0'
+stages:
+  prepare:
+    cmd: python src/dvc_preprocessing.py
+    deps:
+    - path: data/used-cars_2cities_prep.csv
+      hash: md5
+      md5: 9545ba969c5bea432edd98d7a5e935e6
+      size: 82223
+    - path: src/dvc_preprocessing.py
+      hash: md5
+      md5: ee42d5448da76630ebded6faeefe7673
+      size: 1430
+    outs:
+    - path: data/used_car_test_dcv.csv
+      hash: md5
+      md5: 14e9242b8ba0f86536798a68ef0f5823
+      size: 34520
+    - path: data/used_car_train_dcv.csv
+      hash: md5
+      md5: 928ee356a0f168218ee2054144752894
+      size: 135160

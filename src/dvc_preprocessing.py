@@ -2,12 +2,8 @@ import os
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-# List files in the data directory
-data_files = os.listdir('../data')
-print("Files in the data directory:", data_files)
-
 # Load the used car dataset
-file_path = '../data/used-cars_2cities_prep.csv'
+file_path = './data/used-cars_2cities_prep.csv'
 cars = pd.read_csv(file_path)
 
 # Drop unnecessary columns
@@ -44,5 +40,5 @@ test_df = X_test.copy()
 test_df["price"] = y_test
 
 # Save to CSV
-train_df.to_csv("../data/used_car_train_dcv.csv", index=False)
-test_df.to_csv("../data/used_car_test_dcv.csv", index=False)
+train_df.to_csv("./data/used_car_train_dcv.csv", index=False)
+test_df.to_csv("./data/used_car_test_dcv.csv", index=False)
