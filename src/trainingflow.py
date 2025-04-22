@@ -15,30 +15,28 @@ mlflow.set_tracking_uri("sqlite:///lab6.db")
 mlflow.set_experiment("Metaflow_TrainFlow")
 
 def objective(params, X_train, y_train):
-    p = params.copy()
-    regressor_type = p.pop('type')
-    if regressor_type == 'dt':
-        model = DecisionTreeRegressor(**p)
-    elif regressor_type == "rf":
-        model = RandomForestRegressor(**p)
-    else:
-        model = LinearRegression(**p)
+    with mlflow.start_run(run_name=f"model_selected_features_{params}"):
+        regressor_type = params['type']
+        del params['type']
+        if regressor_type == 'dt':
+            model = DecisionTreeRegressor(**params)
+        elif regressor_type == "rf":
+            model = RandomForestRegressor(**params)
+        elif regressor_type == "linear":
+            model = LinearRegression(**params)
 
-    # Create RMSE scorer (negative because we want to minimize)
-    rmse_scorer = make_scorer(lambda y, y_pred: np.sqrt(mean_squared_error(y, y_pred)), greater_is_better=False)
-    
-    # Calculate negative RMSE (negative because hyperopt minimizes)
-    rmse = -cross_val_score(
-        model, X_train, y_train, scoring=rmse_scorer, cv=5
-    ).mean()
+        RMSE = np.sqrt(-cross_val_score(
+            model, X_train, y_train, 
+            scoring='neg_mean_squared_error', 
+            cv=5).mean()
+        )
 
-    with mlflow.start_run(nested=True):
         mlflow.set_tag("Model", regressor_type)
-        mlflow.log_params(p)
-        mlflow.log_metric("rmse", -rmse)  # Log positive RMSE for clarity
+        mlflow.log_params(params)
+        mlflow.log_metric("RMSE", RMSE)
         mlflow.sklearn.log_model(model, artifact_path="model")
 
-    return {'loss': rmse, 'status': STATUS_OK, 'model': model}  # Higher RMSE is worse
+    return {'loss': RMSE, 'status': STATUS_OK, 'model': model}  # Higher RMSE is worse
 
 searched_space = hp.choice('regressor_type', [
     { 'type': 'dt',
@@ -72,14 +70,13 @@ class TrainFlow(FlowSpec):
     @step
     def train(self):
         trials = Trials()
-        with mlflow.start_run(run_name="hyperopt_parent"):
-            best = fmin(
-                fn=lambda params: objective(params, self.X_train, self.y_train),
-                space=searched_space,
-                algo=tpe.suggest,
-                max_evals=self.runs,
-                trials=trials
-            )
+        best = fmin(
+            fn=lambda params: objective(params, self.X_train, self.y_train),
+            space=searched_space,
+            algo=tpe.suggest,
+            max_evals=self.runs,
+            trials=trials
+        )
 
         best_idx = int(np.argmin([t['result']['loss'] for t in trials.trials]))
         best_model = trials.trials[best_idx]['result']['model']
