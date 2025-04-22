@@ -78,6 +78,7 @@ class TrainFlow(FlowSpec):
 
         best_idx = int(np.argmin([t['result']['loss'] for t in trials.trials]))
         best_model = trials.trials[best_idx]['result']['model']
+        best_model.fit(self.X_train, self.y_train)
 
         with mlflow.start_run(run_name="best_params"):
             mlflow.log_params(best)
@@ -93,3 +94,5 @@ class TrainFlow(FlowSpec):
 
 if __name__ == "__main__":
     TrainFlow()
+
+
