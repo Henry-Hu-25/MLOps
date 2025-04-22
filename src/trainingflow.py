@@ -83,6 +83,9 @@ class TrainFlow(FlowSpec):
         with mlflow.start_run(run_name="best_params"):
             mlflow.log_params(best)
             mlflow.sklearn.log_model(best_model, artifact_path="model")
+        
+        run_id = mlflow.last_active_run().info.run_id
+        mlflow.register_model(f"runs:///{run_id}/artifacts/model", "best_model")
 
         self.best_params = best
         self.next(self.end)
