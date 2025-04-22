@@ -11,3 +11,5 @@ The goal of this folder is to demonstrate proficiency in MLOps and share some ML
 ## Tools
 
 - [MLFlow](https://mlflow.org/)
+- [DVC](https://dvc.org/)
+- [Metaflow](https://metaflow.org/)
