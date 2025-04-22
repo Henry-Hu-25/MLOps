@@ -1,7 +1,8 @@
 from metaflow import FlowSpec, step, Parameter
 import mlflow
 import mlflow.sklearn
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import mean_squared_error
+import numpy as np
 from dvc_preprocessing import preprocess_data
 
 mlflow.set_tracking_uri("sqlite:///lab6.db")
@@ -33,12 +34,12 @@ class ScoreFlow(FlowSpec):
     @step
     def score(self):
         preds = self.model.predict(self.X_test)
-        self.accuracy = accuracy_score(self.y_test, preds.round())
+        self.rmse = np.sqrt(mean_squared_error(self.y_test, preds))
 
         with mlflow.start_run(run_name="scoring", nested=True):
-            mlflow.log_metric("Accuracy", self.accuracy)
+            mlflow.log_metric("RMSE", self.rmse)
 
-        print(f"Scoring results → Accuracy: {self.accuracy:.4f}")
+        print(f"Scoring results → RMSE: {self.rmse:.4f}")
         self.next(self.end)
 
     @step

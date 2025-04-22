@@ -8,6 +8,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import cross_val_score
+from sklearn.metrics import make_scorer, mean_squared_error
 from dvc_preprocessing import preprocess_data
 
 mlflow.set_tracking_uri("sqlite:///lab6.db")
@@ -23,17 +24,21 @@ def objective(params, X_train, y_train):
     else:
         model = LinearRegression(**p)
 
-    accuracy = cross_val_score(
-        model, X_train, y_train, scoring='r2', cv=5
+    # Create RMSE scorer (negative because we want to minimize)
+    rmse_scorer = make_scorer(lambda y, y_pred: np.sqrt(mean_squared_error(y, y_pred)), greater_is_better=False)
+    
+    # Calculate negative RMSE (negative because hyperopt minimizes)
+    rmse = -cross_val_score(
+        model, X_train, y_train, scoring=rmse_scorer, cv=5
     ).mean()
 
     with mlflow.start_run(nested=True):
         mlflow.set_tag("Model", regressor_type)
         mlflow.log_params(p)
-        mlflow.log_metric("accuracy", accuracy)
+        mlflow.log_metric("rmse", -rmse)  # Log positive RMSE for clarity
         mlflow.sklearn.log_model(model, artifact_path="model")
 
-    return {'loss': -accuracy, 'status': STATUS_OK, 'model': model}
+    return {'loss': rmse, 'status': STATUS_OK, 'model': model}  # Higher RMSE is worse
 
 searched_space = hp.choice('regressor_type', [
     { 'type': 'dt',
