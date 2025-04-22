@@ -4,6 +4,9 @@ import mlflow.sklearn
 from sklearn.metrics import accuracy_score
 from dvc_preprocessing import preprocess_data
 
+mlflow.set_tracking_uri("sqlite:///lab6.db")
+mlflow.set_experiment("Metaflow_Scoring")
+
 class ScoreFlow(FlowSpec):
 
     run_id = Parameter(
@@ -14,8 +17,6 @@ class ScoreFlow(FlowSpec):
 
     @step
     def start(self):
-        mlflow.set_tracking_uri("sqlite:///lab6.db")
-        mlflow.set_experiment("Metaflow_Scoring")
         self.next(self.load_data)
 
     @step
