@@ -21,7 +21,7 @@ def main():
 
 class Car(BaseModel):
     odometer: float
-    year: int
+    age: int
 
 model = None
 
