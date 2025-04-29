@@ -4,7 +4,7 @@ url = "http://127.0.0.1:8000/predict"
 
 payload = {
     "odometer": 50000,
-    "age": 26  # Make sure this matches your Pydantic model (not "age")
+    "age": 26 
 }
 
 headers = {
