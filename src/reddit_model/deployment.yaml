@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: reddit-app-deployment
+  labels:
+    app: reddit-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: reddit-app
+  template:
+    metadata:
+      labels:
+        app: reddit-app
+    spec:
+      containers:
+      - name: reddit-app-container
+        image: us-west2-docker.pkg.dev/reddit-model-cloud-deployment/redditmodelrepo/redditmodel:v1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
